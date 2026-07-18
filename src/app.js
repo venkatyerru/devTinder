@@ -1,47 +1,43 @@
 const express = require("express");
 
+const {connectDB}= require("./config/database.js");
+
 const app = express();
 
 const {adminAuth, userAuth} = require("./middlewares/auth");
 
-app.use("/admin", adminAuth)
+const {User} = require("./models/user.js");
 
-app.get("/admin/adddata",(req,res)=>{
-  res.send("successfully added");
+
+
+app.post("/signup",async (req,res)=>{
+
+ try{
+    //creating new instance of the user Model
+    const user = new User({
+        firstName: "venkat",
+        lastName:"yerru",
+        email:"venkat@gmail.com",
+        password:"Nani",
+    });
+
+    await user.save();
+
+    res.send("user is created successfully in the Db");
+
+}
+catch(err){
+    res.status(400).send("some thing went wrong while creating new record"+ err.message);
+}
 })
 
-app.get("/getUserData",(req,res)=>{
-
-    try{
-        throw new Error("brother");
-    }
-
-    catch(err){
-        res.status(500).send("please contact support team");
-    }
-
-})
-
-app.get("/user/adddata", userAuth, (req,res)=>{
-
-    throw new Error("bad one");
-  res.send("user is successfully added");
-})
-
-app.use("/",(err,req,res,next)=>{
-    if(err){
-        res.status(500).send("some thing went wrong please try again later");
-    }
-})
-
-app.post("/user/login",(req,res)=>{
-
-    res.send("user logged in successfully");
-
-})
-
-
-
-app.listen(3000, () => {
+connectDB().then(()=>{
+    console.log("DB connection is successfully established");
+    app.listen(3000, () => {
   console.log("server is listening successfully");
 });
+}).catch(err =>{
+    console.log("DB connection is failed ")
+})
+
+
