@@ -10,8 +10,28 @@ app.get("/admin/adddata",(req,res)=>{
   res.send("successfully added");
 })
 
+app.get("/getUserData",(req,res)=>{
+
+    try{
+        throw new Error("brother");
+    }
+
+    catch(err){
+        res.status(500).send("please contact support team");
+    }
+
+})
+
 app.get("/user/adddata", userAuth, (req,res)=>{
+
+    throw new Error("bad one");
   res.send("user is successfully added");
+})
+
+app.use("/",(err,req,res,next)=>{
+    if(err){
+        res.status(500).send("some thing went wrong please try again later");
+    }
 })
 
 app.post("/user/login",(req,res)=>{
@@ -20,23 +40,6 @@ app.post("/user/login",(req,res)=>{
 
 })
 
-
-
-
-// app.get(
-//   "/user",
-
-//   (req, res,next) => {
-//      res.send("hello this is user");
-//     // next();
-//     // res.send("hello");
-//   }
-// );
-
-// app.get("/user",
-//   (req, res) => {
-//     res.send("hello this user handler 2");
-//   })
 
 
 app.listen(3000, () => {
