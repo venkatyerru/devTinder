@@ -2,35 +2,42 @@ const express = require("express");
 
 const app = express();
 
-app.use(
-  "/user",
+const {adminAuth, userAuth} = require("./middlewares/auth");
 
-  (req, res,next) => {
-    // res.send("hello this is user");
-    next();
-    res.send("hello");
-  },
-  (req, res) => {
-    res.send("hello this user handler 2");
-  }
-);
+app.use("/admin", adminAuth)
 
-// app.get("/user/:userId", (req, res)=>{
-//     console.log(req.params);
-//     res.send(`{query params we got ${req.params.userId}}`);
-// });
-// app.post("/user", (req, res)=>{
-//     //saving data to DB
-//     res.send("Data Sucessfully stored to the database");
-// });
+app.get("/admin/adddata",(req,res)=>{
+  res.send("successfully added");
+})
 
-// app.delete("/user", (req, res)=>{
-//     //saving data to DB
-//     res.send("Dlete to the database");
-// });
-// app.use("/test",(req, res)=>{
-// res.send("hello from the namaste dashboard");
-// });
+app.get("/user/adddata", userAuth, (req,res)=>{
+  res.send("user is successfully added");
+})
+
+app.post("/user/login",(req,res)=>{
+
+    res.send("user logged in successfully");
+
+})
+
+
+
+
+// app.get(
+//   "/user",
+
+//   (req, res,next) => {
+//      res.send("hello this is user");
+//     // next();
+//     // res.send("hello");
+//   }
+// );
+
+// app.get("/user",
+//   (req, res) => {
+//     res.send("hello this user handler 2");
+//   })
+
 
 app.listen(3000, () => {
   console.log("server is listening successfully");
