@@ -88,7 +88,7 @@ app.patch("/user", async(req,res)=>{
     const userId = req.body.userId;
     const data = req.body
  try{
-    const users = await User.findByIdAndUpdate({_id:userId}, data);
+    const users = await User.findByIdAndUpdate({_id:userId}, data , {runValidators: true});
 
     console.log(users);
 
@@ -96,26 +96,26 @@ app.patch("/user", async(req,res)=>{
     
  }
  catch(err){
-    res.status(400).send("something went wrong");
+    res.status(400).send("Update Failed" + err.message);
  }
-})
+})  
 
-app.patch("/user2", async(req,res)=>{
+// app.patch("/user2", async(req,res)=>{
 
-    const email = req.body.email;
-    const data = req.body
- try{
-    const users = await User.findOneAndUpdate({email:email}, data);
+//     const email = req.body.email;
+//     const data = req.body
+//  try{
+//     const users = await User.findOneAndUpdate({email:email}, data);
 
-    console.log(users);
+//     console.log(users);
 
-    res.send("User has been updated successfully");
+//     res.send("User has been updated successfully");
     
- }
- catch(err){
-    res.status(400).send("something went wrong");
- }
-})
+//  }
+//  catch(err){
+//     res.status(400).send("something went wrong");
+//  }
+// })
 
 connectDB().then(()=>{
     console.log("DB connection is successfully established");
