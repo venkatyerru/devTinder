@@ -6,20 +6,16 @@ const app = express();
 
 const {adminAuth, userAuth} = require("./middlewares/auth");
 
-const {User} = require("./models/user.js");
+const User = require("./models/user.js");
 
-
+app.use(express.json());
 
 app.post("/signup",async (req,res)=>{
+    console.log(req.body);
 
  try{
     //creating new instance of the user Model
-    const user = new User({
-        firstName: "venkat",
-        lastName:"yerru",
-        email:"venkat@gmail.com",
-        password:"Nani",
-    });
+    const user = new User(req.body);
 
     await user.save();
 
