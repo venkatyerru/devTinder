@@ -83,39 +83,31 @@ app.delete("/user",async(req,res)=>{
     }
 })
 
-app.patch("/user", async(req,res)=>{
+app.patch("/user/:userId", async(req,res)=>{
 
-    const userId = req.body.userId;
+    const userId = req.params?.userId;
     const data = req.body
  try{
-    const users = await User.findByIdAndUpdate({_id:userId}, data , {runValidators: true});
 
-    console.log(users);
+     const ALLOWED_UPDATES =["userid", "photoUrl","about","gender","age","skills","password"]
+
+    const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATES.includes(k));
+
+    if(!isUpdateAllowed){
+        throw new Error("update not allowed")
+    }
+    if(data?.skills.length >=10){
+        throw new Error("Length of skills execeed");
+    }
+    const users = await User.findByIdAndUpdate({_id:userId}, data , {runValidators: true});
 
     res.send("User has been updated successfully with this ID"+ userId);
     
  }
  catch(err){
-    res.status(400).send("Update Failed" + err.message);
+    res.status(400).send("Update Failed " + err.message);
  }
 })  
-
-// app.patch("/user2", async(req,res)=>{
-
-//     const email = req.body.email;
-//     const data = req.body
-//  try{
-//     const users = await User.findOneAndUpdate({email:email}, data);
-
-//     console.log(users);
-
-//     res.send("User has been updated successfully");
-    
-//  }
-//  catch(err){
-//     res.status(400).send("something went wrong");
-//  }
-// })
 
 connectDB().then(()=>{
     console.log("DB connection is successfully established");
