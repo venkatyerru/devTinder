@@ -8,14 +8,25 @@ const {adminAuth, userAuth} = require("./middlewares/auth");
 
 const User = require("./models/user.js");
 
+const {validateSignUpData} = require("./utils/validation.js");
+
+const bcrypt = require("bcrypt");
+
+
 app.use(express.json());
 
-app.post("/signup",async (req,res)=>{
+app.post("/signup", async (req,res)=>{
+
+    
     console.log(req.body);
 
  try{
     //creating new instance of the user Model
-    const user = new User(req.body);
+    validateSignUpData(req);
+
+    const {firstName,lastName,email,password,photoUrl,about,gender,age,skills} = req.body;
+    const hashedPassword = await bcrypt.hash(password,10);
+    const user = new User({firstName,lastName,email,password:hashedPassword,photoUrl,about,gender,age,skills});
 
     await user.save();
 
@@ -23,10 +34,34 @@ app.post("/signup",async (req,res)=>{
 
 }
 catch(err){
-    res.status(400).send("some thing went wrong while creating new record"+ err.message);
+    res.status(400).send("ERROR: "+ err.message);
 }
 })
 
+app.post("/login",async(req,res)=>{
+    try{
+        const {email, password} = req.body;
+
+        const user = await User.findOne({email: email});
+
+        if(!user){
+            throw new Error("Bad credentials please try again");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if(isPasswordValid){
+            res.send("Login sucessfull!!!");
+        }
+        else{
+            res.status(500).send("Bad credentials please try again");
+        }
+    }
+    catch(err){
+        res.status(400).send("Error:" + err.message);
+    }
+
+})
 app.get("/user", async (req,res)=>{
     const userEmail = req.body.email;
     console.log(userEmail);
